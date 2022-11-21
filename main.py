@@ -16,7 +16,7 @@ import asyncio
 
 # set path and log file name
 base_dir = Path(__file__).resolve().parent
-log_file = "app.log"
+log_file_path = "~/app.log"
 
 # create fastapi instance
 app = FastAPI()
@@ -35,7 +35,7 @@ async def log_reader(n=5) -> list:
         list: List containing last n-lines in log file with html tags.
     """
     log_lines = []
-    with open(f"{base_dir}/{log_file}", "r") as file:
+    with open(f"{log_file_path}", "r") as file:
         for line in file.readlines()[-n:]:
             if line.__contains__("ERROR"):
                 log_lines.append(f'<span class="text-red-400">{line}</span><br/>')
@@ -56,7 +56,7 @@ async def get(request: Request) -> templates.TemplateResponse:
     Returns:
         TemplateResponse: Jinja template with context data.
     """
-    context = {"title": "FastAPI Streaming Log Viewer over WebSockets", "log_file": log_file}
+    context = {"title": "FastAPI Streaming Log Viewer over WebSockets", "log_file": log_file_path}
     return templates.TemplateResponse("index.html", {"request": request, "context": context})
 
 
@@ -88,5 +88,4 @@ if __name__ == "__main__":
         log_level="info",
         reload=True,
         workers=1,
-        debug=True,
     )
